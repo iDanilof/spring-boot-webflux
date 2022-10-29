@@ -48,9 +48,27 @@ public class ProductController {
 
     products.subscribe(product -> log.info(product.getName()));
 
-    //How to contrarrest the contrapreasure with Thymeleaf and Flux
+    //How to contrarrest the back-pressure with Thymeleaf and Flux
     //We declare the buffe size and show by N elements.
     model.addAttribute("products", new ReactiveDataDriverContextVariable(products, 2));
+    model.addAttribute("title", "List of Products");
+
+    return "list";
+  }
+
+  @GetMapping("/list-full")
+  public String listFull(Model model) {
+
+    final var products = productRepository.findAll()
+        .map(product -> {
+          product.setName(product.getName().toUpperCase());
+          return product;
+        })
+        .repeat(5000);
+
+    products.subscribe(product -> log.info(product.getName()));
+
+    model.addAttribute("products", products);
     model.addAttribute("title", "List of Products");
 
     return "list";
