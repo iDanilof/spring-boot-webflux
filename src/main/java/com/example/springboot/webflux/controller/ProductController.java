@@ -35,5 +35,25 @@ public class ProductController {
     
     return "list";
   }
+
+  @GetMapping("/list-data-driver")
+  public String listDataDriver(Model model) {
+
+    final var products = productRepository.findAll()
+            .map(product -> {
+              product.setName(product.getName().toUpperCase());
+              return product;
+            })
+            .delayElements(Duration.ofSeconds(1));
+
+    products.subscribe(product -> log.info(product.getName()));
+
+    //How to contrarrest the contrapreasure with Thymeleaf and Flux
+    //We declare the buffe size and show by N elements.
+    model.addAttribute("products", new ReactiveDataDriverContextVariable(products, 2));
+    model.addAttribute("title", "List of Products");
+
+    return "list";
+  }
   
 }
