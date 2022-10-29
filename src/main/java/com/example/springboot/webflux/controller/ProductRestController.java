@@ -2,8 +2,8 @@ package com.example.springboot.webflux.controller;
 
 import com.example.springboot.webflux.models.dao.ProductRepository;
 import com.example.springboot.webflux.models.documents.Product;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +12,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequiredArgsConstructor
 @Slf4j
 @RequestMapping("api/products")
 public class ProductRestController {
 
-  @Autowired
-  private ProductRepository productRepository;
+  private final ProductRepository productRepository;
   
   @GetMapping
   public Flux<Product> index() {
