@@ -73,5 +73,23 @@ public class ProductController {
 
     return "list";
   }
+
+  @GetMapping("/list-chunked")
+  public String listChunked(Model model) {
+
+    final var products = productRepository.findAll()
+        .map(product -> {
+          product.setName(product.getName().toUpperCase());
+          return product;
+        })
+        .repeat(5000);
+
+    products.subscribe(product -> log.info(product.getName()));
+
+    model.addAttribute("products", products);
+    model.addAttribute("title", "List of Products");
+
+    return "list-chunked";
+  }
   
 }
