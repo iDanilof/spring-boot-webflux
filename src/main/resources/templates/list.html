@@ -14,6 +14,7 @@
         <th>name</th>
         <th>price</th>
         <th>date</th>
+        <th>update</th>
     </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@
         <td th:text="${product.name}"></td>
         <td th:text="${product.price}"></td>
         <td th:text="${product.createdDate}"></td>
+        <td><a th:href="@{/form/} + ${product.id}">Update</a></td>
     </tr>
     </tbody>
 </table>

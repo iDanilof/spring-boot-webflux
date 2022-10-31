@@ -6,14 +6,20 @@ import com.example.springboot.webflux.models.documents.Product;
 import com.example.springboot.webflux.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 import reactor.core.publisher.Mono;
 
 @Controller
+@SessionAttributes("product")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
@@ -40,8 +46,21 @@ public class ProductController {
     return Mono.just("form");
   }
   
+  @GetMapping("/form/{id}")
+  public Mono<String> update(@PathVariable String id, Model model){
+    final var prodictMono = productService.findById(id)
+            .doOnNext(product -> log.info("Product: " + product.getName()))
+            .defaultIfEmpty(new Product());
+    
+    model.addAttribute("title", "Update product");
+    model.addAttribute("product", prodictMono);
+    
+    return Mono.just("form");
+  }
+  
   @PostMapping("/form")
-  public Mono<String> save(Product product) {
+  public Mono<String> save(Product product, SessionStatus status) {
+    status.setComplete();
     return productService.save(product).doOnNext(product1 -> 
         log.info("Product saved: " + product1.getName() + "Id: " + product1.getId()))
         //.then(Mono.just("redirect:/list)) We can use it too
